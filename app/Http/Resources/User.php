@@ -26,6 +26,7 @@ class User extends JsonResource
           'creditPoints' => $this->creditPoints, 
           'role' => $this->role,
           'name' => $this->name,
+          'is_online' => $this->is_online,
           'email' => $this->email,
           'phone' => $this->phone,
           'emailVerified' => $this->email_verified_at ? 1 : 0,
