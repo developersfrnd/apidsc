@@ -98,6 +98,7 @@ return [
         'password_change' => 'Password changed successfully.',
         'social_change_pwd' => 'You had to login with Facebook or Instagram, We are unable to change password.',
         'user_password_mismatch_error' => 'Old password is wrong.',
+        'not_sufficient'=>'You have no sufficient coin for chat.',
 
 
     ],

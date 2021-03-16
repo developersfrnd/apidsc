@@ -48,6 +48,8 @@ Route::namespace('Api')->group(function () {
         Route::resource('users','UsersController')->only(['update']);
         Route::get('user/online','UsersController@onlineuser');      
         Route::get('user/offline','UsersController@offlineuser');
+        Route::post('checkusercoin','UsersController@checkusercoin');
+        Route::post('reduceusercoin','UsersController@reduceusercoin');
         
     });
 

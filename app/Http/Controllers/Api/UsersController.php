@@ -197,4 +197,33 @@ class UsersController extends APIController
     }
 
 
+    /**
+     * checkusercoin
+     * @param $request request
+     * @return \Illuminate\Http\Response
+     */
+    public function checkusercoin(Request $request){
+        $model_data = User::find($request->room_id);
+        if ($model_data->cherges > $request->user()->creditPoints){
+            return $this->sendResponse([],trans('responses.msgs.not_sufficient'), config('constant.header_code.HTTP_BAD_REQUEST'));
+        }
+        return $this->sendResponse([],trans('responses.msgs.success'), config('constant.header_code.ok'));                
+    }
+
+    /**
+     * reduceusercoin
+     * @param $request request
+     * @return \Illuminate\Http\Response
+     */
+    public function reduceusercoin(Request $request){
+        $model_data = User::find($request->room_id);
+        if ($model_data->cherges > $request->user()->creditPoints){
+            return $this->sendResponse([],trans('responses.msgs.not_sufficient'), config('constant.header_code.HTTP_BAD_REQUEST'));
+        }
+        $request->user()->creditPoints = ($request->user()->creditPoints - ((int)$model_data->cherges));
+        $request->user()->save();
+        return $this->sendResponse([],trans('responses.msgs.success'), config('constant.header_code.ok'));                
+    }
+
+
 }
