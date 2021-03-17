@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\APIController;
 use Illuminate\Http\Request;
+use App\Http\Requests\AccountRequest;
+use App\Http\Resources\AccountResource;
+use App\Account;
 
-class AccountsController extends Controller
+class AccountsController extends APIController
 {
     /**
      * Display a listing of the resource.
@@ -23,9 +26,19 @@ class AccountsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AccountRequest $request)
     {
-        //
+        $account = Account::firstOrNew([
+            'user_id' => $request->user()->id
+        ]);
+
+        $account->account_name = $request->account_name;
+        $account->bank_name = $request->bank_name;
+        $account->account_number = $request->account_number;
+        $account->ifsc_code = $request->ifsc_code;
+        $account->save();
+
+        return $this->sendResponse(new AccountResource(Account::find($account->id)), trans('responses.msgs.feedComment'), config('constant.header_code.ok'));
     }
 
     /**
