@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\User;
 use App\Category;
 use App\Language;
+use App\ModelCoinHistory;
 use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\APIController;
@@ -15,6 +16,7 @@ use App\Traits\Images;
 use \App\Http\Resources\Videos;
 use App\Helper\Helper;
 use Illuminate\Support\Str;
+use DB;
 
 class UsersController extends APIController
 {
@@ -220,9 +222,17 @@ class UsersController extends APIController
         if ($model_data->cherges > $request->user()->creditPoints){
             return $this->sendResponse([],trans('responses.msgs.not_sufficient'), config('constant.header_code.HTTP_BAD_REQUEST'));
         }
+        $coin = (int)$model_data->cherges;
         $request->user()->creditPoints = ($request->user()->creditPoints - ((int)$model_data->cherges));
         $request->user()->save();
-        return $this->sendResponse([],trans('responses.msgs.success'), config('constant.header_code.ok'));                
+        $history = ModelCoinHistory::updateOrCreate(
+            ['id' => $request->history_id],
+            ['coin' => DB::raw('coin + ' . $coin), 'model_id' => $model_data->id, 'earn_from' => $request->user()->id]
+        );
+        return $this->sendResponse([
+            'coin' => $request->user()->creditPoints,
+            'history_id' => $history->id
+        ],trans('responses.msgs.success'), config('constant.header_code.ok'));                
     }
 
 
