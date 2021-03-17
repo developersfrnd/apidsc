@@ -14,7 +14,7 @@ class AddChargesToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->decimal('cherges')->default(0);
+            $table->integer('cherges')->default(0);
         });
     }
 

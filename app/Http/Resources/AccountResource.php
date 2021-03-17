@@ -20,6 +20,7 @@ class AccountResource extends JsonResource
             'bank_name' => $this->bank_name, 
             'account_number' => $this->account_number,
             'ifsc_code' => $this->ifsc_code,
+            'charge_per_minute' => \App\User::find($this->user_id)->cherges,
             'created_at' => $this->created_at->toDateTimeString(), 
             'updated_at' => $this->updated_at->toDateTimeString(), 
         ];

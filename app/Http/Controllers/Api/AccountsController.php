@@ -38,6 +38,8 @@ class AccountsController extends APIController
         $account->ifsc_code = $request->ifsc_code;
         $account->save();
 
+        $request->user()->cherges = $request->charge_per_minute;
+        $request->user()->save();
         return $this->sendResponse(new AccountResource(Account::find($account->id)), trans('responses.msgs.feedComment'), config('constant.header_code.ok'));
     }
 

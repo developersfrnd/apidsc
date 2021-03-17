@@ -28,6 +28,7 @@ class AccountRequest extends FormRequest
             'bank_name' => 'required',
             'account_number' => 'required|numeric',
             'ifsc_code' => 'required',
+            'charge_per_minute' => 'required|numeric'
         ];
     }
 }
