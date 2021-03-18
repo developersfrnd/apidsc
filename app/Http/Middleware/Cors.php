@@ -14,7 +14,7 @@ class Cors {
      * @return mixed
      */
     public function handle($request, Closure $next) {
-        $allowedOrigins = ['http://localhost:3000/',
+        $allowedOrigins = ['http://localhost:3000',
             'http://frontend.desisexichat.com/'
         ];
         

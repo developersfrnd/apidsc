@@ -57,6 +57,7 @@ class User extends JsonResource
           'orientation' => $this->orientation,
           'isProfilePublished' => $this->isProfilePublished,
           'status'=> $this->status,
+          'charges'=> $this->cherges,
           'created_at' => $this->created_at->toDateTimeString(), 
           'updated_at' => $this->updated_at->toDateTimeString(), 
         ];
