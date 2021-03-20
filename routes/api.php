@@ -50,8 +50,7 @@ Route::namespace('Api')->group(function () {
         Route::get('user/offline','UsersController@offlineuser');
         Route::post('checkusercoin','UsersController@checkusercoin');
         Route::post('reduceusercoin','UsersController@reduceusercoin');
-        Route::post('account','AccountsController@store');
-        
+        Route::resource('account','AccountsController')->only(['index', 'store']);
     });
 
     Route::prefix('admin')->group(function () {

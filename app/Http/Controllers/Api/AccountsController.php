@@ -17,7 +17,13 @@ class AccountsController extends APIController
      */
     public function index()
     {
-        //
+        $account = Account::where('user_id',request()->user()->id);
+        if($account->count() > 0){
+            return $this->sendResponse(new AccountResource($account->first()),trans('responses.msgs.feedComment'), config('constant.header_code.ok'));
+        }else{
+            return $this->sendResponse('',trans('responses.msgs.feedComment'), config('constant.header_code.ok'));
+        }
+        
     }
 
     /**
