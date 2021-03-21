@@ -44,6 +44,10 @@ class UsersController extends APIController
         if(request()->query('language')){
             $users->where('languages', 'like', '%'.request()->query('language').'%');
         }
+
+        if(request()->query('similerId')){
+            $users->where('id', '<>', request()->query('similerId'));
+        }
         
         if(request()->query('sort')){
             $users->orderBy(request()->query('sort'), 'desc');
@@ -51,7 +55,7 @@ class UsersController extends APIController
             $users->orderBy('is_online', 'desc')->orderBy('id','desc');
         }
          
-        $users = $users->paginate(config('constant.pagination.per_page'));
+        $users = (!request()->query('similerId')) ? $users->paginate(config('constant.pagination.per_page')) : $users->take(3)->get();;
         return new UserCollection($users);
     }
 
