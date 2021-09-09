@@ -96,7 +96,7 @@ return [
         'model' =>1,
         'admin' =>2,
     ],
-    'ADMIN_MAIL' => env('ADMIN_MAIL', 'admin@yopmail.com'),
+    'ADMIN_MAIL' => env('ADMIN_MAIL', 'admin@desisexichat.com'),
     'description_max_length' =>1000,
     'Payment' => [
         'ApiKey' => 'sk_test_51HNjZOIX1zbhIrFL6muVKNBBJfvchF4GohriXZT4QavJegqyVZIiWtgY9ax63S5HPdbAagli8dPJF1iavYalzZiK00jadLtMAR',

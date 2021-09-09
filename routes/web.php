@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Mail\UserSignup;
+use Illuminate\Support\Facades\Mail;
+use App\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    $user = User::find(8);
+    Mail::to("user9@yopmail.com")->send(new UserSignup($user));
     return view('welcome');
 });

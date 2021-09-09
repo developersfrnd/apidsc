@@ -11,9 +11,12 @@ use App\Http\Resources\Auth as AuthResource;
 use App\Http\Resources\User as UserResource;
 use App\Http\Requests\UserSignupRequest;
 use App\Http\Requests\AuthLoginRequest;
+use App\Mail\ContactUs;
 use DB;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
+use App\Mail\UserSignup;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends APIController {
     
@@ -49,10 +52,12 @@ class AuthController extends APIController {
             $user->save();
             DB::commit();
 
+            Mail::to($user->email)->send(new UserSignup($user));
+            
             $user = $this->userToken($user);
+
             return $this->sendResponse(new AuthResource($user), trans('responses.msgs.success'), config('constant.header_code.ok'));
         } catch (\Exception $e) {
-
             DB::rollback();
             return $this->sendError($e->getMessage(), config('constant.header_code.exception'));
         }
@@ -97,13 +102,7 @@ class AuthController extends APIController {
     }
     
     public function contactUs(Request $request) {
-        
-        $request->validate([
-            'subject' => 'required|min:5',
-            'description' => 'required|max:'.config('constant.description_max_length'),
-        ]);          
-        $options = ['username' => ($this->getUser())?ucwords($this->getUser()->username):'', 'useremail' => ($this->getUser())?$this->getUser()->email:'', 'to'=>Config::get('constant.ADMIN_MAIL'), 'subject'=>'Contact Us', 'usersubject'=>$request->subject, 'usermessage'=>$request->description]; 
-        EmailService::sendMail('contactUs', $options);
+        Mail::to(Config::get('constant.ADMIN_MAIL'))->send(new ContactUs($request));
         return $this->sendResponse('', trans('responses.contactus'), config('constant.header_code.ok'));
     }
 

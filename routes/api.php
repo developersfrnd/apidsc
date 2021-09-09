@@ -28,10 +28,10 @@ Route::namespace('Api')->group(function () {
     Route::get('/chat','WebSocketController@onOpen');
 
     Route::resource('users','UsersController')->only(['index', 'show']);
-    
+    Route::post('contactus', 'AuthController@contactUs');
+
     Route::middleware('auth:api')->group(function() {
         Route::post('logout', 'AuthController@logout');
-        Route::post('contactus', 'AuthController@contactUs');
         Route::get('user', 'AuthController@user');
         Route::get('galleries', 'GalleriesController@index');
         Route::post('galleries', 'GalleriesController@store');
