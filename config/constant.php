@@ -102,5 +102,9 @@ return [
         'ApiKey' => 'sk_test_51HNjZOIX1zbhIrFL6muVKNBBJfvchF4GohriXZT4QavJegqyVZIiWtgY9ax63S5HPdbAagli8dPJF1iavYalzZiK00jadLtMAR',
         'publishableKey' => 'pk_test_51HNjZOIX1zbhIrFLSzy1OUP4WBdWJ3LQCUQJR4NbV5RM4P60lDsgmieKOrSPqPxTIPU9aYNCFMwnwOPz2jvvvqSb00QH4NMMe4',
         'Currency' => 'USD'
-    ]
+    ],
+    'status' => [
+        'active'=>1,
+        'inactive' =>0
+    ],
 ];

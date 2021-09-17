@@ -28,7 +28,7 @@ class UsersController extends APIController
      */
     public function index()
     {
-        $users = User::where('role',config('constant.userrole.model'));
+        $users = User::where('role',config('constant.userrole.model'))->whereNotNull('email_verified_at')->where('status',config('constant.status.active'));
         if(request()->query('category')){
             $users->where('categories', 'like', '%'.request()->query('category').'%');
         };

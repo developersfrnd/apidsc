@@ -31,6 +31,7 @@ class UserSignupRequest extends FormRequest
     public function rules()
     {
         return [
+        'username' => 'required|min:'.config('constant.minUsername').'|max:'.config('constant.maxUsername').'|unique:users|alpha_dash',    
         'name' => 'required|min:'.config('constant.minName').'|max:'.config('constant.maxName'),
         'email' => 'required|email|unique:users,email',
         'password' => 'required|min:5|confirmed',
