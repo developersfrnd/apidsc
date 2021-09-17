@@ -99,8 +99,8 @@ return [
     'ADMIN_MAIL' => env('ADMIN_MAIL', 'admin@desisexichat.com'),
     'description_max_length' =>1000,
     'Payment' => [
-        'ApiKey' => 'sk_test_51HNjZOIX1zbhIrFL6muVKNBBJfvchF4GohriXZT4QavJegqyVZIiWtgY9ax63S5HPdbAagli8dPJF1iavYalzZiK00jadLtMAR',
-        'publishableKey' => 'pk_test_51HNjZOIX1zbhIrFLSzy1OUP4WBdWJ3LQCUQJR4NbV5RM4P60lDsgmieKOrSPqPxTIPU9aYNCFMwnwOPz2jvvvqSb00QH4NMMe4',
-        'Currency' => 'USD'
+        'ApiKey' => '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',
+        'publishableKey' => 'pk_live_51JViN3SIdXw5Deq1VhjDlpUOgubnt1LKteSM4f5NOG1sbq9nbGTEZycIBK6Gm2gU7Lnvg6QgI3591wimrF1umh3C00DwiRiElS',
+        'Currency' => 'INR'
     ]
 ];
