@@ -16,6 +16,8 @@ use DB;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\UserSignup;
+use App\Mail\ResendCode;
+use App\Mail\ForgotPasswordToken;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends APIController {
@@ -23,15 +25,15 @@ class AuthController extends APIController {
     public function login(AuthLoginRequest $request) {
         
          $credentials = [
-            'email' => request()->email,
+            'username' => request()->username,
             'password' => request()->password,
         ];
-        $user = User::where('email',$request->email)->first();
+        $user = User::where('username',$request->username)->first();
         
         if (empty($user) || !Hash::check($request->password, $user->password)) {
             return $this->sendError(trans('responses.msgs.invalidUser'), config('constant.header_code.validaion_fail'));
         } else if($user->status == config('constant.user.deactivate.key')) {
-            return $this->sendError(trans('responses.msgs.user_auth_unverified'), config('constant.header_code.unauthorize'));
+            return $this->sendError(trans('responses.msgs.user_block_byadmin'), config('constant.header_code.unauthorize'));
         } else {
            Auth::attempt($credentials);
         }
@@ -43,12 +45,15 @@ class AuthController extends APIController {
         DB::beginTransaction();
         $user = new User;
         try{
+            $verification_code = random_int(100000, 999999);
+            $user->username = $request->username;
             $user->name = $request->name;
             $user->email = $request->email;
             $user->gender = $request->gender;
             $user->role = $request->role;
             $user->dob = substr($request->dob,0,10);
             $user->password = bcrypt($request->password);
+            $user->remember_token = $verification_code;
             $user->save();
             DB::commit();
 
@@ -87,6 +92,102 @@ class AuthController extends APIController {
         }
     }
 
+    public function forgotpasswordtoken(Request $request){
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+        try{
+            $error_message = 'Email not exist';
+            $user = User::where('email', '=', $request->email)->first();
+            if ($user) {
+                $forgot_password_token = random_int(100000, 999999);
+                $user->forgot_password_token = $forgot_password_token;
+                $user->save();
+                Mail::to($user->email)->send(new ForgotPasswordToken($user));
+                return $this->sendResponse($user,trans('responses.msgs.success'), config('constant.header_code.ok'));
+            }
+            return $this->sendError($error_message, config('constant.header_code.validaion_fail'));
+        } catch (\Exception $e) {           
+            return $this->sendError($e->getMessage(), config('constant.header_code.exception'));
+        }
+    }
+
+    public function setPassword(Request $request) {
+        $validator = $request->validate([
+            'forgot_password_token' => 'required',
+            'password' => 'required|confirmed|min:5',
+            'password_confirmation' => 'required'
+        ]);
+        try {
+            $error_message = 'Wrong Token';
+            $user = User::where('email', '=', $request->email)->where('forgot_password_token',$request->forgot_password_token)->first();
+            if ($user) {
+                $user->password = bcrypt($request->password);
+                $user->forgot_password_token = null;
+                $user->save();
+                return $this->sendResponse('',trans('responses.msgs.success'), config('constant.header_code.ok'));
+            }
+            return $this->sendError($error_message, config('constant.header_code.validaion_fail'));
+        } catch (\Exception $e) {           
+            return $this->sendError($e->getMessage(), config('constant.header_code.exception'));
+        }        
+    }
+
+    public function verify(Request $request){
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+        try{
+            $user = User::where('email', '=', $request->email)->first();
+            $error_message = 'Email not exist';     
+            if ($user) {
+                if(!is_null($user->email_verified_at)){
+                    $error_message = 'Already verified please login';
+                }else if($user->remember_token != $request->remember_token){
+                    $error_message = 'Wrong verification code';
+                }else{
+                    $user->email_verified_at = date("Y-m-d H:i:s");
+                    $user->save();
+                    $user = $this->userToken($user);
+                    return $this->sendResponse(new AuthResource($user),trans('responses.msgs.success'), config('constant.header_code.ok'));
+                }
+            }            
+            return $this->sendError($error_message, config('constant.header_code.validaion_fail'));
+        } catch (\Exception $e) {           
+            return $this->sendError($e->getMessage(), config('constant.header_code.exception'));
+        }
+    }
+
+    /**
+     * Resend the email verification notification.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function resend(Request $request){
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+        try{
+            $user = User::where('email', '=', $request->email)->first();
+            $error_message = 'Email not exist'; 
+            if ($user) {
+                if(!is_null($user->email_verified_at)){
+                    $error_message = 'Already verified please login';
+                }else{                    
+                    $verification_code = random_int(100000, 999999);
+                    $user->remember_token = $verification_code;
+                    $user->save();
+                    Mail::to($user->email)->send(new ResendCode($user));   
+                    return $this->sendResponse('',trans('responses.msgs.code_send'), config('constant.header_code.ok'));
+                }
+            }
+            return $this->sendError($error_message, config('constant.header_code.validaion_fail'));
+        } catch (\Exception $e) {           
+            return $this->sendError($e->getMessage(), config('constant.header_code.exception'));
+        }
+    }
+
     public function changePassword(Request $request) {
 
         $validator = $request->validate([
@@ -103,30 +204,7 @@ class AuthController extends APIController {
     
     public function contactUs(Request $request) {
         Mail::to(Config::get('constant.ADMIN_MAIL'))->send(new ContactUs($request));
-        return $this->sendResponse('', trans('responses.contactus'), config('constant.header_code.ok'));
-    }
-
-    /**
-     * Resend the email verification notification.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function resend(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|exists:users,email'
-        ]);
-        try{
-            $user = User::where('email', '=', $request->email)->first();
-            if ($user->hasVerifiedEmail()) {
-                return $this->sendError(trans('responses.msgs.emailAlreadyVerified'), config('constant.header_code.forbidden'));
-            }
-            $user->sendEmailVerificationNotification();
-            return $this->sendResponse(new UserResource($user), trans('responses.msgs.verificationEmail'), config('constant.header_code.ok'));
-        } catch (\Exception $e) {           
-            return $this->sendError($e->getMessage(), config('constant.header_code.exception'));
-        }
+        return $this->sendResponse(Config::get('constant.ADMIN_MAIL'), trans('responses.contactus'), config('constant.header_code.ok'));
     }
 
     /* For get default config data*/

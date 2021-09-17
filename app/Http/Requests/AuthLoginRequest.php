@@ -18,7 +18,7 @@ class AuthLoginRequest extends FormRequest
     {
         
         return [
-                'email' => 'required|email',
+                'username' => 'required',
                 'password' => 'required',
             ];   
     }

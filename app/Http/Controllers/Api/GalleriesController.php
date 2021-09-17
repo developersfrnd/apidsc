@@ -83,8 +83,9 @@ class GalleriesController extends APIController {
      * @param  \App\FeedMedia  $feedMedia
      * @return \Illuminate\Http\Response
      */
-    public function destroy(FeedMedia $feedMedia) {
-        //
+    public function destroy($id) {
+        Gallery::destroy($id);
+        return $this->sendResponse('', trans('responses.msgs.success'), config('constant.header_code.ok'));
     }
 
 }

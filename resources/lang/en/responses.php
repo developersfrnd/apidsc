@@ -28,8 +28,9 @@ return [
     'msgs' => [
         'loggedIn'=>'Logged in successfully.',
         'user_auth_unverified' => "Your account has not been activated yet, please verify your email first.",
+        'code_send' => "Verification code send successfully",
         'user_block_byadmin' => "Your account has been blocked by admin.",
-        'invalidUser'=>'Incorrect email address or password.',
+        'invalidUser'=>'Incorrect username or password.',
         'success'=>'Request successfully completed.',
         'mailsent'=>'Email sent successfully.',
         'unauthorize'=>'Unauthorized: Access is denied',

@@ -90,4 +90,22 @@ class UsersController extends AdminsController
         //$this->sendResponse($path,'Request completed successfully.');
         return $this->sendResponse($path, trans('responses.msgs.success'), config('constant.header_code.ok'));
     }
+
+    public function block($id) 
+    {
+        $user = User::find($id);
+        $user->status = 0;
+        $user->save();
+        $users = User::where('role',1)->orderBy('id', 'desc')->paginate(config('constant.pagination.per_page'));
+        return new UserCollection($users);
+    }
+
+    public function unblock($id) 
+    {
+        $user = User::find($id);
+        $user->status = 1;
+        $user->save();
+        $users = User::where('role',1)->orderBy('id', 'desc')->paginate(config('constant.pagination.per_page'));
+        return new UserCollection($users);
+    }
 }

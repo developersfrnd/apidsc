@@ -18,7 +18,8 @@ class SettingsController extends APIController
      */
     public function show(Setting $setting)
     {
-        //
+        $setting = Setting::first();
+        return $this->sendResponse(new SettingResource($setting), trans('responses.success'), config('constant.header_code.ok'));
     }
 
     public function update(Request $request, Setting $setting)

@@ -17,11 +17,15 @@ use Illuminate\Support\Facades\Route;
 Route::namespace('Api')->group(function () {
     Route::post('/signup','AuthController@signup');
     Route::post('/isEmailAvalaible','AuthController@isEmailAvalaible');
+    Route::post('/forgotpasswordtoken','AuthController@forgotpasswordtoken');
+    Route::post('/setpassword','AuthController@setPassword');
+    Route::post('/verify','AuthController@verify');
     Route::post('/user/resend', 'AuthController@resend');
     Route::post('/login','AuthController@login');
     Route::get('/categories','CategoriesController@index');
     Route::get('/ethnicities','EthnicitiesController@index');
     Route::get('/languages','LanguagesController@index');
+    Route::get('/faqs','FaqsController@index');
     Route::resource('videos', 'VideosController')->only(['index']);
     Route::get('galleries/{userId}', 'GalleriesController@show');
     Route::get('/contents/{slug}','ContentsController@bySlug');
@@ -34,8 +38,9 @@ Route::namespace('Api')->group(function () {
         Route::post('logout', 'AuthController@logout');
         Route::get('user', 'AuthController@user');
         Route::get('galleries', 'GalleriesController@index');
+        Route::delete('galleries/{id}', 'GalleriesController@destroy');
         Route::post('galleries', 'GalleriesController@store');
-        Route::resource('videos', 'VideosController')->only(['store','show']);
+        Route::resource('videos', 'VideosController')->only(['store','show', 'destroy']);
         Route::post('orders/paymentIntent','OrdersController@getPaymentIntent');
         Route::resource('/orders','OrdersController');
         Route::resource('/bookings','BookingsController');
@@ -51,6 +56,7 @@ Route::namespace('Api')->group(function () {
         Route::post('checkusercoin','UsersController@checkusercoin');
         Route::post('reduceusercoin','UsersController@reduceusercoin');
         Route::resource('account','AccountsController')->only(['index', 'store']);
+        Route::get('setting','SettingsController@show');
     });
 
     Route::prefix('admin')->group(function () {
@@ -69,6 +75,9 @@ Route::namespace('Api')->group(function () {
                 Route::resource('/photos', 'GalleriesController')->only(['index']);
                 Route::resource('/videos', 'VideosController')->only(['index']);
                 Route::resource('/orders', 'OrdersController')->only(['index']);
+                Route::resource('/faqs','FaqsController');
+                Route::get('/user/block/{id}', 'UsersController@block');
+                Route::get('/user/unblock/{id}', 'UsersController@unblock');
             });
         });
     });

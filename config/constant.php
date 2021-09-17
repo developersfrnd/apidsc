@@ -102,5 +102,9 @@ return [
         'ApiKey' => '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',
         'publishableKey' => 'pk_live_51JViN3SIdXw5Deq1VhjDlpUOgubnt1LKteSM4f5NOG1sbq9nbGTEZycIBK6Gm2gU7Lnvg6QgI3591wimrF1umh3C00DwiRiElS',
         'Currency' => 'INR'
-    ]
+    ],
+    'status' => [
+        'active'=>1,
+        'inactive' =>0
+    ],
 ];
